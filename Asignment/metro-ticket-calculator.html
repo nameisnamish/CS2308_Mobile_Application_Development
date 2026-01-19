@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metro Ticket Calculator - Material Design 3</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Material Design 3 - Teal/Green Theme */
+            --md-sys-color-primary: #006C4C;
+            --md-sys-color-primary-container: #89F8C7;
+            --md-sys-color-on-primary: #FFFFFF;
+            --md-sys-color-on-primary-container: #002114;
+            --md-sys-color-secondary: #4D6357;
+            --md-sys-color-secondary-container: #CFE9D9;
+            --md-sys-color-on-secondary-container: #0A1F16;
+            --md-sys-color-tertiary: #3D6373;
+            --md-sys-color-tertiary-container: #C1E8FB;
+            --md-sys-color-on-tertiary-container: #001F29;
+            --md-sys-color-surface: #F5FBF7;
+            --md-sys-color-surface-variant: #DBE5DD;
+            --md-sys-color-surface-container: #E9F0EC;
+            --md-sys-color-surface-container-high: #E3EBE7;
+            --md-sys-color-surface-container-highest: #DEE5E1;
+            --md-sys-color-on-surface: #181D1A;
+            --md-sys-color-on-surface-variant: #3F4944;
+            --md-sys-color-outline: #6F7975;
+            --md-sys-color-error: #BA1A1A;
+            --md-sys-color-error-container: #FFDAD6;
+            --md-sys-color-on-error-container: #410002;
+            
+            /* Shadows */
+            --md-elevation-1: 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 3px 1px rgba(0, 0, 0, 0.15);
+            --md-elevation-2: 0 1px 2px rgba(0, 0, 0, 0.3), 0 2px 6px 2px rgba(0, 0, 0, 0.15);
+            --md-elevation-3: 0 4px 8px 3px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #00897B 0%, #26A69A 50%, #4DB6AC 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Background decoration */
+        body::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            top: -200px;
+            right: -200px;
+            animation: float 15s ease-in-out infinite;
+        }
+
+        body::after {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            bottom: -150px;
+            left: -150px;
+            animation: float 20s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(30px, -30px); }
+        }
+
+        .container {
+            background: var(--md-sys-color-surface);
+            border-radius: 28px;
+            padding: 32px;
+            max-width: 480px;
+            width: 100%;
+            box-shadow: var(--md-elevation-3);
+            position: relative;
+            z-index: 1;
+            animation: slideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .header-icon {
+            background: var(--md-sys-color-primary-container);
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            box-shadow: var(--md-elevation-1);
+        }
+
+        .header-icon .material-icons {
+            font-size: 32px;
+            color: var(--md-sys-color-on-primary-container);
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--md-sys-color-on-surface);
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: var(--md-sys-color-on-surface-variant);
+        }
+
+        .form-section {
+            margin-bottom: 24px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--md-sys-color-on-surface-variant);
+            margin-bottom: 8px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 16px;
+            font-size: 16px;
+            font-family: 'Inter', sans-serif;
+            border: 1px solid var(--md-sys-color-outline);
+            border-radius: 12px;
+            background: var(--md-sys-color-surface);
+            color: var(--md-sys-color-on-surface);
+            transition: all 0.2s ease;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--md-sys-color-primary);
+            box-shadow: 0 0 0 3px rgba(0, 108, 76, 0.1);
+        }
+
+        .gender-selector {
+            display: flex;
+            gap: 12px;
+        }
+
+        .gender-option {
+            flex: 1;
+            position: relative;
+        }
+
+        .gender-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .gender-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 16px;
+            border: 2px solid var(--md-sys-color-outline);
+            border-radius: 16px;
+            background: var(--md-sys-color-surface);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            color: var(--md-sys-color-on-surface-variant);
+        }
+
+        .gender-label .material-icons {
+            font-size: 20px;
+        }
+
+        .gender-option input[type="radio"]:checked + .gender-label {
+            background: var(--md-sys-color-primary-container);
+            border-color: var(--md-sys-color-primary);
+            color: var(--md-sys-color-on-primary-container);
+        }
+
+        .gender-label:hover {
+            border-color: var(--md-sys-color-primary);
+            background: var(--md-sys-color-surface-container);
+        }
+
+        .base-price-display {
+            background: var(--md-sys-color-secondary-container);
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+        }
+
+        .price-label {
+            font-size: 14px;
+            color: var(--md-sys-color-on-secondary-container);
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .price-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--md-sys-color-on-secondary-container);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 18px;
+            font-size: 16px;
+            font-weight: 600;
+            background: var(--md-sys-color-primary);
+            color: var(--md-sys-color-on-primary);
+            border: none;
+            border-radius: 100px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: var(--md-elevation-1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .calculate-btn:hover {
+            background: #005a3f;
+            box-shadow: var(--md-elevation-2);
+            transform: translateY(-2px);
+        }
+
+        .calculate-btn:active {
+            transform: scale(0.98);
+        }
+
+        .result-section {
+            margin-top: 24px;
+            padding: 24px;
+            background: var(--md-sys-color-tertiary-container);
+            border-radius: 20px;
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .result-section.show {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .discount-info {
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(0, 31, 41, 0.1);
+        }
+
+        .discount-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            background: var(--md-sys-color-primary);
+            color: var(--md-sys-color-on-primary);
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .discount-reason {
+            font-size: 14px;
+            color: var(--md-sys-color-on-tertiary-container);
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+
+        .price-breakdown {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: var(--md-sys-color-on-tertiary-container);
+        }
+
+        .price-breakdown.total {
+            padding-top: 12px;
+            border-top: 2px solid rgba(0, 31, 41, 0.2);
+            font-size: 18px;
+            font-weight: 700;
+            margin-top: 12px;
+        }
+
+        .price-breakdown-label {
+            font-weight: 500;
+        }
+
+        .price-breakdown-value {
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .free-badge {
+            background: var(--md-sys-color-primary);
+            color: var(--md-sys-color-on-primary);
+            padding: 8px 20px;
+            border-radius: 100px;
+            font-size: 18px;
+            font-weight: 700;
+            display: inline-block;
+        }
+
+        .info-card {
+            background: var(--md-sys-color-surface-container);
+            padding: 16px;
+            border-radius: 12px;
+            margin-top: 24px;
+            border-left: 4px solid var(--md-sys-color-primary);
+        }
+
+        .info-card-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--md-sys-color-on-surface);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-card-title .material-icons {
+            font-size: 18px;
+            color: var(--md-sys-color-primary);
+        }
+
+        .info-card-content {
+            font-size: 13px;
+            color: var(--md-sys-color-on-surface-variant);
+            line-height: 1.6;
+        }
+
+        .info-card-content ul {
+            margin-left: 16px;
+            margin-top: 8px;
+        }
+
+        .info-card-content li {
+            margin-bottom: 4px;
+        }
+
+        /* Responsive design */
+        @media (max-width: 480px) {
+            .container {
+                padding: 24px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .gender-label span {
+                display: none;
+            }
+
+            .gender-label {
+                padding: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-icon">
+                <span class="material-icons">train</span>
+            </div>
+            <h1>Metro Ticket Calculator</h1>
+            <p class="subtitle">Calculate your discounted fare</p>
+        </div>
+
+        <div class="form-section">
+            <div class="input-group">
+                <label for="age">Age</label>
+                <div class="input-wrapper">
+                    <input type="number" id="age" min="0" max="120" placeholder="Enter your age" required>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Gender</label>
+                <div class="gender-selector">
+                    <div class="gender-option">
+                        <input type="radio" id="male" name="gender" value="male" checked>
+                        <label for="male" class="gender-label">
+                            <span class="material-icons">man</span>
+                            <span>Male</span>
+                        </label>
+                    </div>
+                    <div class="gender-option">
+                        <input type="radio" id="female" name="gender" value="female">
+                        <label for="female" class="gender-label">
+                            <span class="material-icons">woman</span>
+                            <span>Female</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="base-price-display">
+                <div class="price-label">Base Ticket Price</div>
+                <div class="price-value">₹50.00</div>
+            </div>
+
+            <button class="calculate-btn" id="calculateBtn">
+                <span class="material-icons">calculate</span>
+                Calculate Fare
+            </button>
+        </div>
+
+        <div class="result-section" id="resultSection">
+            <div class="discount-info" id="discountInfo">
+                <div class="discount-badge" id="discountBadge">50% DISCOUNT</div>
+                <div class="discount-reason" id="discountReason"></div>
+            </div>
+
+            <div class="price-breakdown">
+                <span class="price-breakdown-label">Base Price:</span>
+                <span class="price-breakdown-value">₹50.00</span>
+            </div>
+
+            <div class="price-breakdown">
+                <span class="price-breakdown-label">Discount:</span>
+                <span class="price-breakdown-value" id="discountAmount">-₹25.00</span>
+            </div>
+
+            <div class="price-breakdown total">
+                <span class="price-breakdown-label">Final Price:</span>
+                <span class="price-breakdown-value" id="finalPrice">₹25.00</span>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <div class="info-card-title">
+                <span class="material-icons">info</span>
+                Discount Rules
+            </div>
+            <div class="info-card-content">
+                <ul>
+                    <li>Females: 50% discount</li>
+                    <li>Kids under 5: Free ticket</li>
+                    <li>Kids 5-8 years: 50% discount</li>
+                    <li>Seniors 65+: 70% discount (pay 30%)</li>
+                    <li>Maximum discount applies if multiple eligible</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const BASE_PRICE = 50;
+
+        const calculateBtn = document.getElementById('calculateBtn');
+        const resultSection = document.getElementById('resultSection');
+        const ageInput = document.getElementById('age');
+        const discountBadge = document.getElementById('discountBadge');
+        const discountReason = document.getElementById('discountReason');
+        const discountAmount = document.getElementById('discountAmount');
+        const finalPrice = document.getElementById('finalPrice');
+
+        calculateBtn.addEventListener('click', calculateFare);
+
+        // Allow Enter key to calculate
+        ageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                calculateFare();
+            }
+        });
+
+        function calculateFare() {
+            const age = parseInt(ageInput.value);
+            const gender = document.querySelector('input[name="gender"]:checked').value;
+
+            // Validation
+            if (!age || age < 0 || age > 120) {
+                alert('Please enter a valid age between 0 and 120');
+                return;
+            }
+
+            // Calculate discounts
+            const discounts = [];
+
+            // Check all applicable discounts
+            if (age < 5) {
+                discounts.push({
+                    percentage: 100,
+                    reason: 'Children under 5 years travel free! 🎉'
+                });
+            }
+
+            if (age >= 5 && age <= 8) {
+                discounts.push({
+                    percentage: 50,
+                    reason: 'Kids aged 5-8 years get 50% discount'
+                });
+            }
+
+            if (gender === 'female') {
+                discounts.push({
+                    percentage: 50,
+                    reason: 'Female passengers get 50% discount'
+                });
+            }
+
+            if (age > 65) {
+                discounts.push({
+                    percentage: 70,
+                    reason: 'Senior citizens (65+) pay only 30% of ticket price'
+                });
+            }
+
+            // Find maximum discount
+            let maxDiscount = { percentage: 0, reason: 'No discount applicable' };
+            
+            if (discounts.length > 0) {
+                maxDiscount = discounts.reduce((max, current) => 
+                    current.percentage > max.percentage ? current : max
+                );
+            }
+
+            // Calculate prices
+            const discountAmountValue = (BASE_PRICE * maxDiscount.percentage) / 100;
+            const finalPriceValue = BASE_PRICE - discountAmountValue;
+
+            // Update UI
+            if (maxDiscount.percentage === 100) {
+                // Free ticket
+                discountBadge.textContent = 'FREE TICKET';
+                discountBadge.style.background = 'var(--md-sys-color-primary)';
+                discountReason.textContent = maxDiscount.reason;
+                discountAmount.textContent = `-₹${discountAmountValue.toFixed(2)}`;
+                finalPrice.textContent = 'FREE';
+                finalPrice.style.color = 'var(--md-sys-color-primary)';
+            } else if (maxDiscount.percentage > 0) {
+                // Has discount
+                discountBadge.textContent = `${maxDiscount.percentage}% DISCOUNT`;
+                discountBadge.style.background = 'var(--md-sys-color-primary)';
+                discountReason.textContent = maxDiscount.reason;
+                
+                // Show multiple discounts info if applicable
+                if (discounts.length > 1) {
+                    const otherDiscounts = discounts
+                        .filter(d => d.percentage !== maxDiscount.percentage)
+                        .map(d => `${d.percentage}%`)
+                        .join(', ');
+                    
+                    if (otherDiscounts) {
+                        discountReason.textContent += ` (Other applicable discounts: ${otherDiscounts}. Maximum applied.)`;
+                    }
+                }
+                
+                discountAmount.textContent = `-₹${discountAmountValue.toFixed(2)}`;
+                finalPrice.textContent = `₹${finalPriceValue.toFixed(2)}`;
+                finalPrice.style.color = 'var(--md-sys-color-on-tertiary-container)';
+            } else {
+                // No discount
+                discountBadge.textContent = 'NO DISCOUNT';
+                discountBadge.style.background = 'var(--md-sys-color-outline)';
+                discountReason.textContent = 'Standard fare applies';
+                discountAmount.textContent = '₹0.00';
+                finalPrice.textContent = `₹${BASE_PRICE.toFixed(2)}`;
+                finalPrice.style.color = 'var(--md-sys-color-on-tertiary-container)';
+            }
+
+            // Show result with animation
+            resultSection.classList.remove('show');
+            setTimeout(() => {
+                resultSection.classList.add('show');
+            }, 50);
+        }
+    </script>
+</body>
+</html>
